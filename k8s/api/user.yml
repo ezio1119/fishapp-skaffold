@@ -1,0 +1,68 @@
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: user
+spec:
+  selector:
+    app: user
+  ports:
+  - protocol: TCP
+    port: 50051
+    targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      initContainers:
+      - name: init-user-db
+        image: busybox
+        command: ['sh', '-c', "until nslookup user-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: migrate
+        image: migrate/migrate
+        args: ["-source", "github://ezio1119:4a0baad88cbd2037e554d85bd63b4449d306a6cf@ezio1119/fishapp-user/db/sql", "-database", "mysql://root:password@tcp(user-db-mysql:3306)/user_DB", "up"]
+
+      - name: init-blacklist-kvs
+        image: busybox
+        command: ['sh', '-c', "until nslookup blacklist-kvs-redis-master.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-nats-streaming
+        image: busybox
+        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-image
+        image: busybox
+        command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      containers:
+      - name: user
+        image: user
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:50051"]
+          initialDelaySeconds: 1
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:50051"]
+          initialDelaySeconds: 1
+        env:
+        - name: DB_HOST
+          value: user-db-mysql
+        - name: KVS_HOST
+          value: blacklist-kvs-redis-master

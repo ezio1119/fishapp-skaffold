@@ -1,0 +1,146 @@
+apiVersion: skaffold/v2beta5
+kind: Config
+metadata:
+  name: skaffold
+build:
+  artifacts:
+  - image: user
+    context: fishapp-user
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+  - image: chat
+    context: fishapp-chat
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+  - image: image
+    context: fishapp-image
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+  - image: post
+    context: fishapp-post
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+  - image: relaylog
+    context: fishapp-relaylog
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+  - image: api-gateway
+    context: fishapp-api-gateway
+    # sync:
+    #   manual:
+    #     - src: '**/*'
+    #       dest: /app
+    docker:
+      target: prod
+      # target: dev
+
+deploy:
+  kubectl:
+    manifests:
+    - k8s/nats/*.yml
+    - k8s/api/*.yml
+
+  helm:
+    releases:
+    - name: user-db
+      chartPath: stable/mysql
+      setValues: {
+        mysqlRootPassword: password,
+        mysqlDatabase: user_DB,
+        timezone: Asia/Tokyo,
+      }
+      remote: true
+
+    - name: chat-db
+      chartPath: stable/mysql
+      setValues: {
+        mysqlRootPassword: password,
+        mysqlDatabase: chat_DB,
+        timezone: Asia/Tokyo,
+      }
+      remote: true
+
+    - name: image-db
+      chartPath: stable/mysql
+      setValues: {
+        mysqlRootPassword: password,
+        mysqlDatabase: image_DB,
+        timezone: Asia/Tokyo,
+      }
+      remote: true
+    
+    - name: post-db
+      chartPath: stable/mysql
+      setValues: {
+        mysqlRootPassword: password,
+        mysqlDatabase: post_DB,
+        timezone: Asia/Tokyo,
+      }
+      remote: true
+
+    - name: blacklist-kvs
+      chartPath: bitnami/redis
+      setValues: {
+        cluster.slaveCount: 0,
+        global.redis.password: password,
+      }
+      remote: true
+
+    - name: chat-kvs
+      chartPath: bitnami/redis
+      setValues: {
+        cluster.slaveCount: 0,
+        global.redis.password: password,
+      }
+      remote: true
+
+portForward:
+- resourceType: Service
+  resourceName: user-db-mysql
+  localPort: 4306
+  port: 3306
+
+- resourceType: Service
+  resourceName: chat-db-mysql
+  localPort: 5306
+  port: 3306
+
+- resourceType: Service
+  resourceName: image-db-mysql
+  localPort: 6306
+  port: 3306
+
+- resourceType: Service
+  resourceName: api-gateway
+  localPort: 8080
+  port: 8080

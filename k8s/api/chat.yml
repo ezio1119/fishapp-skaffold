@@ -1,0 +1,68 @@
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: chat
+spec:
+  selector:
+    app: chat
+  ports:
+  - protocol: TCP
+    port: 50051
+    targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-deployment
+  labels:
+    app: chat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat
+  template:
+    metadata:
+      labels:
+        app: chat
+    spec:
+      initContainers:
+      - name: init-chat-kvs
+        image: busybox
+        command: ['sh', '-c', "until nslookup chat-kvs-redis-master.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      
+      - name: init-chat-db
+        image: busybox
+        command: ['sh', '-c', "until nslookup chat-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-nats-streaming
+        image: busybox
+        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-image
+        image: busybox
+        command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: migrate
+        image: migrate/migrate
+        args: ["-source", "github://ezio1119:4a0baad88cbd2037e554d85bd63b4449d306a6cf@ezio1119/fishapp-chat/db/sql", "-database", "mysql://root:password@tcp(chat-db-mysql:3306)/chat_DB", "up"]
+
+      containers:
+      - name: chat
+        image: chat
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:50051"]
+          initialDelaySeconds: 1
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:50051"]
+          initialDelaySeconds: 1
+        env:
+        - name: DB_HOST
+          value: chat-db-mysql
+        - name: KVS_HOST
+          value: chat-kvs-redis-master

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relaylog-deployment
+  labels:
+    app: relaylog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relaylog
+  template:
+    metadata:
+      labels:
+        app: relaylog
+    spec:
+      initContainers:
+      - name: init-nats-streaming
+        image: busybox
+        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-chat-db
+        image: busybox
+        command: ['sh', '-c', "until nslookup chat-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      - name: init-post-db
+        image: busybox
+        command: ['sh', '-c', "until nslookup post-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+      containers:
+      - name: relaylog
+        image: relaylog
+        env:
+        - name: POSTDB_HOST
+          value: post-db-mysql
+        - name: CHATDB_HOST
+          value: chat-db-mysql
