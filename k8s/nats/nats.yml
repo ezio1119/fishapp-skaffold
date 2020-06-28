@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: nats-streaming
-        image: nats-streaming:latest
+        image: nats-streaming:alpine
         ports:
         - containerPort: 4223
         args: ["-p", "4223", "-m", "8223", "-cid", "fishapp-cluster"]

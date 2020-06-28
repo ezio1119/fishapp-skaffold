@@ -28,35 +28,35 @@ spec:
         app: post
     spec:
       initContainers:
-      - name: init-post-db
-        image: busybox
-        command: ['sh', '-c', "until nslookup post-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-post-db
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup post-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
       - name: migrate
         image: migrate/migrate
-        args: ["-source", "github://ezio1119:4a0baad88cbd2037e554d85bd63b4449d306a6cf@ezio1119/fishapp-post/db/sql", "-database", "mysql://root:password@tcp(post-db-mysql:3306)/post_DB", "up"]
+        args: ["-source", "github://ezio1119:2aa2ad92949ebd9b6733d3f6ad3a0a2702e0ddd2@ezio1119/fishapp-post/db/sql", "-database", "mysql://root:password@tcp(post-db-mysql:3306)/post_DB", "up"]
 
-      - name: init-nats-streaming
-        image: busybox
-        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-nats-streaming
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-image
-        image: busybox
-        command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-image
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
       containers:
       - name: post
         image: post
         ports:
         - containerPort: 50051
-        readinessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:50051"]
-          initialDelaySeconds: 1
-        livenessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:50051"]
-          initialDelaySeconds: 1
+        # readinessProbe:
+        #   exec:
+        #     command: ["/bin/grpc_health_probe", "-addr=:50051"]
+        #   initialDelaySeconds: 1
+        # livenessProbe:
+        #   exec:
+        #     command: ["/bin/grpc_health_probe", "-addr=:50051"]
+        #   initialDelaySeconds: 1
         env:
         - name: DB_HOST
           value: post-db-mysql

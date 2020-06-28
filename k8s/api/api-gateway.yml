@@ -27,37 +27,37 @@ spec:
       labels:
         app: api-gateway
     spec:
-      initContainers:
-      - name: init-nats-streaming
-        image: busybox
-        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # initContainers:
+      # - name: init-nats-streaming
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-image
-        image: busybox
-        command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-image
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-post
-        image: busybox
-        command: ['sh', '-c', "until nslookup post.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-post
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup post.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-user
-        image: busybox
-        command: ['sh', '-c', "until nslookup user.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-user
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup user.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-chat
-        image: busybox
-        command: ['sh', '-c', "until nslookup chat.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-chat
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup chat.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
       containers:
       - name: api-gateway
         image: api-gateway
-        readinessProbe:
-          exec:
-            command: ['sh', '-c', "/healthcheck.sh"]
-          initialDelaySeconds: 1
-        livenessProbe:
-          exec:
-            command: ['sh', '-c', "/healthcheck.sh"]
-          initialDelaySeconds: 1
+        # readinessProbe:
+        #   exec:
+        #     command: ['sh', '-c', "/healthcheck.sh"]
+        #   initialDelaySeconds: 1
+        # livenessProbe:
+        #   exec:
+        #     command: ['sh', '-c', "/healthcheck.sh"]
+        #   initialDelaySeconds: 1
         ports:
         - containerPort: 8080

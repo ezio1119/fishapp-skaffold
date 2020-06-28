@@ -69,7 +69,6 @@ deploy:
     manifests:
     - k8s/nats/*.yml
     - k8s/api/*.yml
-
   helm:
     releases:
     - name: user-db

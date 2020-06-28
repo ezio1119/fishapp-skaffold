@@ -14,18 +14,18 @@ spec:
       labels:
         app: relaylog
     spec:
-      initContainers:
-      - name: init-nats-streaming
-        image: busybox
-        command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # initContainers:
+      # - name: init-nats-streaming
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-chat-db
-        image: busybox
-        command: ['sh', '-c', "until nslookup chat-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-chat-db
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup chat-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
-      - name: init-post-db
-        image: busybox
-        command: ['sh', '-c', "until nslookup post-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      # - name: init-post-db
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup post-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
       containers:
       - name: relaylog
