@@ -20,4 +20,4 @@ addrepo:
 
 up: pull
 	git pull
-	skaffold dev
+	skaffold dev --port-forward=true
