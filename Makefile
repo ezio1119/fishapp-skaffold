@@ -21,3 +21,6 @@ addrepo:
 up: pull
 	git pull
 	skaffold dev --port-forward=true
+
+token:
+	

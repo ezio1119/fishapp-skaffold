@@ -123,7 +123,13 @@ portForward:
   localPort: 6306
   port: 3306
 
+  - resourceType: Service
+  resourceName: post-db-mysql
+  localPort: 7306
+  port: 3306
+
 - resourceType: Service
   resourceName: api-gateway
   localPort: 8080
   port: 8080
+
