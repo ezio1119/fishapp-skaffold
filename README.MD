@@ -1,5 +1,6 @@
 ## 始め方
 ```bash
+make clone (最初だけ)
 make up
 ```
 Deployments stabilized in ~　と出るまで待つこと。
