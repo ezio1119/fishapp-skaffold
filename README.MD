@@ -28,12 +28,12 @@ URL: localhost:8080/graphql/playground
 URL: localhost:8080/graphql
 ## DB接続方法
 ローカルのポートを使用済みだとエラー出る。
-| dbname   | host | password | port |
-|:-----------|------------:|:------------:|:------------:|
-| user_DB   |     localhost |     password     | 4306
-| chat_DB    |        localhost |      password      |5306
-| image_DB   |     localhost |    password    |6306
-| post_DB    |      localhost |     password     | 7306
+| dbname   | host | port | username | password |
+|:-----------|------------:|:------------:|:------------:|:------------:|
+| user_DB   |     localhost |   4306       | root | password
+| chat_DB    |        localhost |    5306        | root|password
+| image_DB   |     localhost |   6306     |root |password
+| post_DB    |      localhost |    7306  |  root |password
 
 ## Githubトークン埋め込み方法
 vscodeで、<< Github Token >>を検索して置換する。
