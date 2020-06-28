@@ -73,38 +73,22 @@ deploy:
     releases:
     - name: user-db
       chartPath: stable/mysql
-      setValues: {
-        mysqlRootPassword: password,
-        mysqlDatabase: user_DB,
-        timezone: Asia/Tokyo,
-      }
+      valuesFiles: ["k8s/helm/user-db-values.yml"]
       remote: true
 
     - name: chat-db
       chartPath: stable/mysql
-      setValues: {
-        mysqlRootPassword: password,
-        mysqlDatabase: chat_DB,
-        timezone: Asia/Tokyo,
-      }
+      valuesFiles: ["k8s/helm/chat-db-values.yml"]
       remote: true
 
     - name: image-db
       chartPath: stable/mysql
-      setValues: {
-        mysqlRootPassword: password,
-        mysqlDatabase: image_DB,
-        timezone: Asia/Tokyo,
-      }
+      valuesFiles: ["k8s/helm/image-db-values.yml"]
       remote: true
     
     - name: post-db
       chartPath: stable/mysql
-      setValues: {
-        mysqlRootPassword: password,
-        mysqlDatabase: post_DB,
-        timezone: Asia/Tokyo,
-      }
+      valuesFiles: ["k8s/helm/post-db-values.yml"]
       remote: true
 
     - name: blacklist-kvs

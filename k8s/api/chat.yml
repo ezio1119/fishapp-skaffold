@@ -28,14 +28,18 @@ spec:
         app: chat
     spec:
       initContainers:
-      # - name: init-chat-kvs
-      #   image: busybox
-      #   command: ['sh', '-c', "until nslookup chat-kvs-redis-master.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-      
       # - name: init-chat-db
       #   image: busybox
       #   command: ['sh', '-c', "until nslookup chat-db-mysql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
+      - name: migrate
+        image: migrate/migrate
+        args: ["-source", "github://ezio1119:78591659505da5f3a09c15c21162920402703f1b@ezio1119/fishapp-chat/db/sql", "-database", "mysql://root:password@tcp(chat-db-mysql:3306)/chat_DB", "up"]
+
+      # - name: init-chat-kvs
+      #   image: busybox
+      #   command: ['sh', '-c', "until nslookup chat-kvs-redis-master.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      
       # - name: init-nats-streaming
       #   image: busybox
       #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
@@ -43,10 +47,6 @@ spec:
       # - name: init-image
       #   image: busybox
       #   command: ['sh', '-c', "until nslookup image.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-
-      - name: migrate
-        image: migrate/migrate
-        args: ["-source", "github://ezio1119:2aa2ad92949ebd9b6733d3f6ad3a0a2702e0ddd2@ezio1119/fishapp-chat/db/sql", "-database", "mysql://root:password@tcp(chat-db-mysql:3306)/chat_DB", "up"]
 
       containers:
       - name: chat
@@ -66,3 +66,5 @@ spec:
           value: chat-db-mysql
         - name: KVS_HOST
           value: chat-kvs-redis-master
+        - name: TZ
+          value: Asia/Tokyo

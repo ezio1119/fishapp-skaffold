@@ -1,0 +1,8 @@
+configurationFiles:
+  my.cnf: |-
+    [mysqld]
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+mysqlDatabase: image_DB
+timezone: Asia/Tokyo
+mysqlRootPassword: password

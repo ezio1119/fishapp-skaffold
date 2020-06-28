@@ -34,7 +34,7 @@ spec:
 
       - name: migrate
         image: migrate/migrate
-        args: ["-source", "github://ezio1119:2aa2ad92949ebd9b6733d3f6ad3a0a2702e0ddd2@ezio1119/fishapp-post/db/sql", "-database", "mysql://root:password@tcp(post-db-mysql:3306)/post_DB", "up"]
+        args: ["-source", "github://ezio1119:78591659505da5f3a09c15c21162920402703f1b@ezio1119/fishapp-post/db/sql", "-database", "mysql://root:password@tcp(post-db-mysql:3306)/post_DB", "up"]
 
       # - name: init-nats-streaming
       #   image: busybox
@@ -60,3 +60,5 @@ spec:
         env:
         - name: DB_HOST
           value: post-db-mysql
+        - name: TZ
+          value: Asia/Tokyo

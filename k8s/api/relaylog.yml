@@ -14,7 +14,7 @@ spec:
       labels:
         app: relaylog
     spec:
-      # initContainers:
+      initContainers:
       # - name: init-nats-streaming
       #   image: busybox
       #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
@@ -35,3 +35,5 @@ spec:
           value: post-db-mysql
         - name: CHATDB_HOST
           value: chat-db-mysql
+        - name: TZ
+          value: Asia/Tokyo

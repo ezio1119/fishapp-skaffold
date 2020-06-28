@@ -27,7 +27,7 @@ spec:
       labels:
         app: api-gateway
     spec:
-      # initContainers:
+      initContainers:
       # - name: init-nats-streaming
       #   image: busybox
       #   command: ['sh', '-c', "until nslookup nats-streaming.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
@@ -61,3 +61,6 @@ spec:
         #   initialDelaySeconds: 1
         ports:
         - containerPort: 8080
+        env:
+        - name: TZ
+          value: Asia/Tokyo
